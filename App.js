@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import io from 'socket.io-client/dist/socket.io';
+import io from 'socket.io-client';
 
 export default class App extends React.Component {
   state = {
@@ -10,12 +10,21 @@ export default class App extends React.Component {
   constructor() {
     super();
 
-    this.socket = io('localhost:3000', {jsonp: false})
+    this.socket = io('http://localhost:3000', 
+      {transports: ['websocket']}
+    )
+    //connecting to local host does not work for external Android
+
+    this.socket.on('update', () => {
+      console.log('in App.js phone side')
+      this.setState({name: 'Nate'})
+    })
   }
   render() {
     return (
       <View style={styles.container}>
-        <Text>{this.state.name}</Text>
+        
+        <Text>My Name is {this.state.name}</Text>
       </View>
     );
   }
